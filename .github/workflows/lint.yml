@@ -1,9 +1,10 @@
 name: ESLint on Develop Push
 
 on:
-  push:
-    branches:
-      - develop
+  pull_request:
+      types: [opened, synchronize, reopened]
+      branches:
+          - develop
   workflow_dispatch:
 
 jobs:
