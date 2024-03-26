@@ -5,7 +5,7 @@ export default function Home() {
         <>
             <Image
                 src="cari-hati-icon-white.svg"
-                alt="Cari Hati logo"
+                alt="Cari Hati icon"
                 width={50}
                 height={50}
             />
