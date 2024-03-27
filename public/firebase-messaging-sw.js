@@ -4,12 +4,12 @@ importScripts('https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/8.8.0/firebase-messaging.js');
 
 const firebaseConfig = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
+    apiKey: "AIzaSyDHvp916WUfdYG-2L2auLQ_oeiLDrOAEiw",
+    authDomain: "cari-hati.firebaseapp.com",
+    projectId: "cari-hati",
+    storageBucket: "cari-hati.appspot.com",
+    messagingSenderId: "21649625637",
+    appId: "1:21649625637:web:739539f5cbcaa4981065cc"
 };
 
 // eslint-disable-next-line no-undef
