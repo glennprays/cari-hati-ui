@@ -6,7 +6,7 @@ const useFcmToken = () => {
     const [token, setToken] = useState("");
     const [notificationPermissionStatus, setNotificationPermissionStatus] =
         useState("");
-
+        
     useEffect(() => {
         const retrieveToken = async () => {
             try {
@@ -21,7 +21,8 @@ const useFcmToken = () => {
 
                     if (permission === "granted") {
                         const currentToken = await getToken(messaging, {
-                            vapidKey: "your_vapid_key",
+                            vapidKey:
+                                process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
                         });
                         if (currentToken) {
                             setToken(currentToken);
