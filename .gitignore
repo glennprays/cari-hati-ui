@@ -44,3 +44,7 @@ next-env.d.ts
 **/public/swe-worker-*.js
 
 .env
+
+**/public/firebase-messaging-sw.js
+**/src/utils/firebase/firebase.ts
+**/src/utils/hooks/useFcmToken.tsx
