@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Head from "next/head";
+import Fcm from "./_firebase/fcm";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -22,6 +23,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`bg-primary text-white ${poppins.className}`}>
+                <Fcm />
                 <div className="w-full min-h-screen mx-auto max-w-[480px] min-[480px]:border min-[480px]:border-gray-800 z-[1] bg-primary shadow-[#242424] shadow-lg">
                     {children}
                 </div>
