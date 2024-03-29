@@ -12,6 +12,15 @@ const withPWA = require("@ducanh2912/next-pwa").default({
     },
 });
 
-const nextConfig = {}
+const nextConfig = {
+    async rewrites() {
+        return [
+            {
+                source: '/api/v1/:path*',
+                destination: `${process.env.PROXY_API_HOST}/:path*`,
+            },
+        ]
+    },
+}
 
 module.exports = withPWA(nextConfig)
