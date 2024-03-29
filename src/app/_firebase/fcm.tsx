@@ -4,7 +4,7 @@ import { getMessaging, onMessage } from "firebase/messaging";
 import firebaseApp from "@/utils/firebase/firebase";
 import useFcmToken from "@/utils/hooks/useFcmToken";
 
-export default function Fcm() {
+export default function FCMForeground() {
     const { fcmToken, notificationPermissionStatus } = useFcmToken();
     // Use the token as needed
     fcmToken && console.log("FCM token:", fcmToken);
@@ -24,5 +24,5 @@ export default function Fcm() {
         }
     }, []);
 
-    return <> </>;
+    return undefined;
 }

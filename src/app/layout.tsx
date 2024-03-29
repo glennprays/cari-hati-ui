@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import Head from "next/head";
-import Fcm from "./_firebase/fcm";
+import Providers from "./providers";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -22,11 +21,12 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className={`bg-primary text-white ${poppins.className}`}>
-                <Fcm />
-                <div className="w-full min-h-screen mx-auto max-w-[480px] min-[480px]:border min-[480px]:border-gray-800 z-[1] bg-primary shadow-[#242424] shadow-lg">
-                    {children}
-                </div>
+            <body className={`bg-primary text-white overflow-hidden ${poppins.className}`}>
+                <Providers>
+                    <main className="dark w-full min-h-screen mx-auto max-w-[448px] min-[448px]:border min-[480px]:border-gray-800 z-[1] bg-primary shadow-[#242424] shadow-lg">
+                        {children}
+                    </main>
+                </Providers>
             </body>
         </html>
     );
