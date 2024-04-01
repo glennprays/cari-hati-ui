@@ -7,18 +7,17 @@ import localforage from "localforage";
 import { getMessaging, deleteToken } from "firebase/messaging";
 import firebaseApp from "../utils/firebase/firebase";
 import useFcmToken from "@/utils/hooks/useFcmToken";
-import axiosInstance from "@/utils/requester/axiosCustom";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface AuthContextType {
-    user: User | null;
+    identity: Identity | null;
     login: (token: string) => void;
     logout: () => Promise<void>;
     accessToken: string | null;
     refreshAccessToken: () => Promise<string>;
 }
 
-type User = {
+type Identity = {
     email: string;
     role: string;
     id: string;
@@ -35,7 +34,7 @@ interface JwtPayload {
 }
 
 const AuthContext = createContext<AuthContextType>({
-    user: null,
+    identity: null,
     login: (token: string) => {},
     logout: async () => {},
     accessToken: null,
@@ -46,7 +45,7 @@ const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<User | null>(null);
+    const [identity, setIdentity] = useState<Identity | null>(null);
     const [accessToken, setAccessToken] = useState<string | null>(
         typeof window !== "undefined"
             ? localStorage.getItem("access_token")
@@ -76,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 process.env.NEXT_PUBLIC_FIREBASE_APP_ID || ""
             );
             setFcmToken("");
-            setUser(null);
+            setIdentity(null);
             router.push("/");
             setLoading(false);
         }
@@ -85,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const refreshAccessToken = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.post("/api/v1/auth/refresh");
+            const response = await axios.post("/api/v1/auth/refresh");
             const accessToken = response.data.access_token;
             setAccessToken(accessToken);
             return accessToken;
@@ -111,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         typeof decodedUserData.exp !== "undefined" &&
                         now < decodedUserData.exp
                     ) {
-                        setUser({
+                        setIdentity({
                             email: decodedUserData.username,
                             role: decodedUserData.sub.role,
                             id: decodedUserData.sub.id,
@@ -133,13 +132,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             loadUserFromLocalStorage();
         } else {
             localStorage.removeItem("access_token");
-            setUser(null);
+            setIdentity(null);
             setLoading(false);
         }
     }, [accessToken]);
 
     const authContextValue = {
-        user,
+        identity,
         login,
         logout,
         accessToken,

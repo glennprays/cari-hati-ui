@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { AuthProvider } from "@/contexts/auth";
+import { AxiosProvider } from "@/utils/requester/AxiosProvider";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -26,7 +27,9 @@ export default function RootLayout({
                 className={`bg-primary text-white overflow-hidden ${poppins.className}`}
             >
                 <AuthProvider>
-                    <Providers>{children}</Providers>
+                    <AxiosProvider>
+                        <Providers>{children}</Providers>
+                    </AxiosProvider>
                 </AuthProvider>
             </body>
         </html>
