@@ -24,7 +24,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     );
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    const { user, accessToken } = useAuth();
+    const { identity: user, accessToken } = useAuth();
 
     useEffect(() => {
         const checkPermission = () => {
