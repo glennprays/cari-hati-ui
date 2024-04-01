@@ -12,6 +12,9 @@ import {
     useDisclosure,
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
+import { AuthProvider, useAuth } from "@/contexts/auth";
+import StartPage from "./_sections/start";
+import MobileScreen from "./MobileScreen";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     const [notificationPermission, setNotificationPermission] = useState(
@@ -20,6 +23,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             : "default"
     );
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    const { user, accessToken } = useAuth();
 
     useEffect(() => {
         const checkPermission = () => {
@@ -32,7 +37,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         };
 
         checkPermission();
-    }, [notificationPermission]);
+    }, [notificationPermission, onOpen]);
     const requestNotificationPermission = async (onClose: () => void) => {
         const permission = await (typeof window !== "undefined"
             ? window.Notification.requestPermission()
@@ -85,7 +90,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                     )}
                 </ModalContent>
             </Modal>
-            {children}
+            <MobileScreen>{user ? children : <StartPage />}</MobileScreen>
         </NextUIProvider>
     );
 }

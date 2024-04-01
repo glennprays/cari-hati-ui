@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMessaging, getToken } from "firebase/messaging";
 import firebaseApp from "../firebase/firebase";
+import * as localForage from "localforage";
 
 const useFcmToken = () => {
     const [token, setToken] = useState("");
@@ -8,53 +9,8 @@ const useFcmToken = () => {
         useState("");
 
     useEffect(() => {
-        const isTokenInLocalDatabase = () => {
-            return new Promise<string | null>((resolve, reject) => {
-                const request = indexedDB.open(
-                    "firebase-messaging-database",
-                    1
-                );
+        const TOKEN_KEY = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "";
 
-                request.onsuccess = (event) => {
-                    const database = (event.target as IDBOpenDBRequest).result;
-                    const transaction = database.transaction(
-                        ["firebase-messaging-store"],
-                        "readonly"
-                    );
-                    const store = transaction.objectStore(
-                        "firebase-messaging-store"
-                    );
-                    const getRequest = store.get(
-                        process.env.NEXT_PUBLIC_FIREBASE_APP_ID || ""
-                    );
-
-                    getRequest.onsuccess = (event) => {
-                        const result = (event.target as IDBRequest).result;
-                        if (result) {
-                            resolve(result.token);
-                        } else {
-                            resolve(null);
-                        }
-                    };
-
-                    getRequest.onerror = (event) => {
-                        console.error(
-                            "Error checking value:",
-                            (event.target as IDBRequest).error
-                        );
-                        reject((event.target as IDBRequest).error);
-                    };
-                };
-
-                request.onerror = (event) => {
-                    console.error(
-                        "Error opening database:",
-                        (event.target as IDBOpenDBRequest).error
-                    );
-                    reject((event.target as IDBOpenDBRequest).error);
-                };
-            });
-        };
         const retrieveToken = async () => {
             try {
                 if (
@@ -67,21 +23,24 @@ const useFcmToken = () => {
                     setNotificationPermissionStatus(permission);
 
                     if (permission === "granted") {
-                        const token = await isTokenInLocalDatabase();
-                        if (token) {
-                            setToken(token);
+                        const storedToken: string | null =
+                            await localForage.getItem(TOKEN_KEY);
+                        if (storedToken) {
+                            setToken(storedToken);
+                            return;
+                        }
+                        const currentToken = await getToken(messaging, {
+                            vapidKey:
+                                process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+                        });
+
+                        if (currentToken) {
+                            setToken(currentToken);
+                            await localForage.setItem(TOKEN_KEY, currentToken);
                         } else {
-                            const currentToken = await getToken(messaging, {
-                                vapidKey:
-                                    process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-                            });
-                            if (currentToken) {
-                                setToken(currentToken);
-                            } else {
-                                console.log(
-                                    "No registration token available. Request permission to generate one."
-                                );
-                            }
+                            console.log(
+                                "No registration token available. Request permission to generate one."
+                            );
                         }
                     }
                 }
@@ -93,7 +52,7 @@ const useFcmToken = () => {
         retrieveToken();
     }, []);
 
-    return { fcmToken: token, notificationPermissionStatus };
+    return { fcmToken: token, notificationPermissionStatus, setFcmToken: setToken };
 };
 
 export default useFcmToken;
