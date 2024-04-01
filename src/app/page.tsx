@@ -1,14 +1,14 @@
-import Image from "next/image";
+"use client";
+
+import { useAuth } from "@/contexts/auth";
 
 export default function Home() {
+    const { logout } = useAuth();
     return (
         <>
-            <Image
-                src="cari-hati-icon-white.svg"
-                alt="Cari Hati icon"
-                width={50}
-                height={50}
-            />
+            Success Login
+            <br />
+            <button onClick={logout}>Logout</button>
         </>
     );
 }
