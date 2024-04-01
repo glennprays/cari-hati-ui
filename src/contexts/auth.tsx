@@ -2,17 +2,20 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { LoadingFullPage } from "@/components/loading";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import localforage from "localforage";
 import { getMessaging, deleteToken } from "firebase/messaging";
 import firebaseApp from "../utils/firebase/firebase";
 import useFcmToken from "@/utils/hooks/useFcmToken";
+import axiosInstance from "@/utils/requester/axiosCustom";
+import { useRouter } from "next/router";
 
 interface AuthContextType {
     user: User | null;
     login: (token: string) => void;
     logout: () => Promise<void>;
     accessToken: string | null;
+    refreshAccessToken: () => Promise<string>;
 }
 
 type User = {
@@ -36,6 +39,9 @@ const AuthContext = createContext<AuthContextType>({
     login: (token: string) => {},
     logout: async () => {},
     accessToken: null,
+    refreshAccessToken: async (): Promise<string> => {
+        return "";
+    },
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -47,6 +53,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             : null
     );
     const { setFcmToken } = useFcmToken();
+
+    const router = useRouter();
 
     const login = (token: string) => {
         setAccessToken(token);
@@ -69,6 +77,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             );
             setFcmToken("");
             setUser(null);
+            router.push("/");
+            setLoading(false);
+        }
+    };
+
+    const refreshAccessToken = async () => {
+        setLoading(true);
+        try {
+            const response = await axiosInstance.post("/api/v1/auth/refresh");
+            const accessToken = response.data.access_token;
+            setAccessToken(accessToken);
+            return accessToken;
+        } catch (error) {
+            console.log(
+                "Failed to refresh access token,",
+                (error as AxiosError).message
+            );
+        } finally {
             setLoading(false);
         }
     };
@@ -117,6 +143,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         accessToken,
+        refreshAccessToken,
     };
 
     return (
