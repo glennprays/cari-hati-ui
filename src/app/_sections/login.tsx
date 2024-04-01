@@ -1,12 +1,15 @@
 "use client";
+import { useAuth } from "@/contexts/auth";
 import useFcmToken from "@/utils/hooks/useFcmToken";
 import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/react";
-import axios from "axios";
+import { Button, Card, CardBody } from "@nextui-org/react";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
-import React, { ChangeEventHandler, FormEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 
-export default function Home() {
+export default function LoginPage() {
+    const { login } = useAuth();
+
     const { fcmToken, notificationPermissionStatus } = useFcmToken();
     const [formData, setFormData] = useState({
         email: "",
@@ -16,6 +19,8 @@ export default function Home() {
         email: false,
         password: false,
     });
+    const [errorMessage, setErrorMessage] = useState("");
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -36,7 +41,6 @@ export default function Home() {
                 ...formData,
                 fcm_token: fcmToken,
             };
-            console.log("form data: ", form);
             await sendSignInForm(form);
         }
     };
@@ -69,14 +73,25 @@ export default function Home() {
         form: typeof formData & { fcm_token: string }
     ) => {
         try {
+            console.log("form:", form);
             const response = await axios.post("/api/v1/auth/signin", form);
-            console.log(response.data);
+            const accessToken = response.data.access_token;
+            login(accessToken);
             setFormData({
                 email: "",
                 password: "",
             });
         } catch (error) {
             console.log(error);
+            if ((error as AxiosError).response) {
+                setErrorMessage(
+                    (error as AxiosError).message || "Login failed"
+                );
+            } else {
+                setErrorMessage(
+                    "An error occurred. Please check your network connection."
+                );
+            }
         }
     };
 
@@ -87,6 +102,13 @@ export default function Home() {
                 className="w-full flex flex-col gap-5 "
             >
                 <p className="text-[43px] font-bold mb-5">Sign Up</p>
+                {errorMessage && (
+                    <Card className="bg-pink-1 rounded-md">
+                        <CardBody>
+                            <p>{errorMessage}</p>
+                        </CardBody>
+                    </Card>
+                )}
                 <Input
                     type="email"
                     label="Email"
