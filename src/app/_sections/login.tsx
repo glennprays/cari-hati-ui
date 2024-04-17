@@ -1,5 +1,6 @@
 "use client";
-import { useAuth } from "@/contexts/auth";
+import { LoadingFullPage } from "@/components/loading";
+import useAuth from "@/utils/hooks/useAuth";
 import useFcmToken from "@/utils/hooks/useFcmToken";
 import { Input } from "@nextui-org/input";
 import { Button, Card, CardBody } from "@nextui-org/react";
@@ -8,7 +9,7 @@ import Link from "next/link";
 import React, { FormEvent, useState } from "react";
 
 export default function LoginPage() {
-    const { login } = useAuth();
+    const { setAuth, isLoading } = useAuth();
 
     const { fcmToken, notificationPermissionStatus } = useFcmToken();
     const [formData, setFormData] = useState({
@@ -76,7 +77,7 @@ export default function LoginPage() {
             console.log("form:", form);
             const response = await axios.post("/api/v1/auth/signin", form);
             const accessToken = response.data.access_token;
-            login(accessToken);
+            setAuth(accessToken);
             setFormData({
                 email: "",
                 password: "",
