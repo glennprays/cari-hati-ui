@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
-import { AuthProvider } from "@/contexts/auth";
-import { AxiosProvider } from "@/utils/requester/AxiosProvider";
+import { AuthProvider } from "@/contexts/AuthProvider";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -27,9 +26,7 @@ export default function RootLayout({
                 className={`bg-primary text-white overflow-hidden ${poppins.className}`}
             >
                 <AuthProvider>
-                    <AxiosProvider>
-                        <Providers>{children}</Providers>
-                    </AxiosProvider>
+                    <Providers>{children}</Providers>
                 </AuthProvider>
             </body>
         </html>
