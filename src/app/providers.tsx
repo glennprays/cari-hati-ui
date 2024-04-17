@@ -12,9 +12,10 @@ import {
     useDisclosure,
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
-import { AuthProvider, useAuth } from "@/contexts/auth";
 import StartPage from "./_sections/start";
 import MobileScreen from "./MobileScreen";
+import useAuth from "@/utils/hooks/useAuth";
+import { LoadingFullPage } from "@/components/loading";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     const [notificationPermission, setNotificationPermission] = useState(
@@ -23,9 +24,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             : "default"
     );
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
-    const { identity: user, accessToken } = useAuth();
-
+    const { accessToken, isLoading } = useAuth();
     useEffect(() => {
         const checkPermission = () => {
             if (
@@ -90,7 +89,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                     )}
                 </ModalContent>
             </Modal>
-            <MobileScreen>{user ? children : <StartPage />}</MobileScreen>
+            <MobileScreen>
+                <LoadingFullPage show={isLoading} />
+                {accessToken === "" ? <StartPage /> : children}
+            </MobileScreen>
         </NextUIProvider>
     );
 }
