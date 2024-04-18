@@ -17,6 +17,7 @@ export default function UserLayout({
         if (accessToken === "") {
             router.replace("/");
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [accessToken]);
 
     const pathname = usePathname();

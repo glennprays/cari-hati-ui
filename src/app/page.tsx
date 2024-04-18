@@ -15,6 +15,7 @@ export default function Home() {
         if (accessToken) {
             router.replace("/home");
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [accessToken]);
     return (
         <div suppressHydrationWarning>

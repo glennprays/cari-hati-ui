@@ -120,7 +120,7 @@ export default function Page() {
                 {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             </form>
             <div className="flex">
-                Didn't get the code?
+                Didn&apos;t get the code?
                 <span
                     onClick={resendActivationCode}
                     className="font-bold hover:underline"
