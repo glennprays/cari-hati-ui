@@ -3,36 +3,23 @@ import useAuth from "@/utils/hooks/useAuth";
 import useAxiosPrivate from "@/utils/hooks/useAxiosPrivate";
 import useRefreshToken from "@/utils/hooks/useRefreshToken";
 import { useEffect, useState } from "react";
+import StartPage from "./_sections/start";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-    const { logout, identity } = useAuth();
-    const [account, setAccount] = useState<any>();
+    const { accessToken } = useAuth();
 
-    const refresh = useRefreshToken();
-
-    const axiosPrivate = useAxiosPrivate();
+    const router = useRouter();
 
     useEffect(() => {
-        const getAccount = async () => {
-            try {
-                console.log("get account");
-                const response = await axiosPrivate.get("/api/v1/auth/account");
-                setAccount(response.data);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        getAccount();
-    }, [axiosPrivate]);
+        if (accessToken) {
+            router.replace("/home");
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [accessToken]);
     return (
-        <>
-            Success Login
-            <br />
-            <button onClick={logout}>Logout</button>
-            <br />
-            <p>{account && account.id}</p>
-            <p>{JSON.stringify(identity)}</p>
-            <button onClick={() => refresh()}>Refresh</button>
-        </>
+        <div suppressHydrationWarning>
+            <StartPage />
+        </div>
     );
 }

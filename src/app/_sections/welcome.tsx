@@ -12,7 +12,7 @@ export default function WelcomePage({
     onToggleRegistration: () => void;
 }) {
     return (
-        <div className="p-10 w-full h-[100vh] bg-primary-gradient">
+        <div className="p-10 w-full h-[100vh] bg-primary-gradient" suppressHydrationWarning>
             <div className="flex items-end w-full justify-center mt-[15vh] select-none">
                 <Image
                     src="cari-hati-icon-white.svg"
@@ -33,7 +33,10 @@ export default function WelcomePage({
                 Policy.
             </p>
             <div className="w-full flex flex-col items-center mt-[35px]">
-                <p className="text-white font-light text-md px-[50px] py-[20px] hover:underline cursor-pointer">
+                <p
+                    onClick={onToggleRegistration}
+                    className="text-white font-light text-md px-[50px] py-[20px] hover:underline cursor-pointer"
+                >
                     Create New Account
                 </p>
                 <Button

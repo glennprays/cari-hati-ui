@@ -25,9 +25,11 @@ export default function RootLayout({
             <body
                 className={`bg-primary text-white overflow-hidden ${poppins.className}`}
             >
-                <AuthProvider>
-                    <Providers>{children}</Providers>
-                </AuthProvider>
+                <main>
+                    <AuthProvider>
+                        <Providers>{children}</Providers>
+                    </AuthProvider>
+                </main>
             </body>
         </html>
     );
