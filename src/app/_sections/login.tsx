@@ -9,7 +9,7 @@ import Link from "next/link";
 import React, { FormEvent, useState } from "react";
 
 export default function LoginPage() {
-    const { setAuth, isLoading } = useAuth();
+    const { setAuth, setUserActivatedStatus } = useAuth();
 
     const { fcmToken, notificationPermissionStatus } = useFcmToken();
     const [formData, setFormData] = useState({
@@ -74,10 +74,10 @@ export default function LoginPage() {
         form: typeof formData & { fcm_token: string }
     ) => {
         try {
-            console.log("form:", form);
             const response = await axios.post("/api/v1/auth/signin", form);
             const accessToken = response.data.access_token;
             setAuth(accessToken);
+            setUserActivatedStatus(response.data.person.activatedAt ? true : false);
             setFormData({
                 email: "",
                 password: "",
@@ -102,7 +102,7 @@ export default function LoginPage() {
                 onSubmit={handleSubmit}
                 className="w-full flex flex-col gap-5 "
             >
-                <p className="text-[43px] font-bold mb-5">Sign Up</p>
+                <p className="text-[43px] font-bold mb-5">Sign In</p>
                 {errorMessage && (
                     <Card className="bg-pink-1 rounded-md">
                         <CardBody>
