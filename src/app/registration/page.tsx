@@ -1,24 +1,29 @@
 "use client";
-import { LoadingFullPage } from "@/components/loading";
 import useAuth from "@/utils/hooks/useAuth";
 import useFcmToken from "@/utils/hooks/useFcmToken";
-import { Input } from "@nextui-org/input";
-import { Button, Card, CardBody } from "@nextui-org/react";
-import axios, { AxiosError } from "axios";
+import axios from "@/utils/requester/axios";
+import { AxiosError } from "axios";
+import { Button, Card, CardBody, Input } from "@nextui-org/react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
-import React, { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
-    const { setAuth, setUserActivatedStatus } = useAuth();
+export default function Home() {
+    const { fcmToken } = useFcmToken();
+    const { setAuth, accessToken, setUserActivatedStatus } = useAuth();
 
-    const { fcmToken, notificationPermissionStatus } = useFcmToken();
+    const router = useRouter();
+
     const [formData, setFormData] = useState({
         email: "",
         password: "",
+        passwordConfirmation: "",
     });
+
     const [isInvalid, setIsInvalid] = useState({
         email: false,
         password: false,
+        passwordConfirmation: false,
     });
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -32,7 +37,7 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-
+        setErrorMessage("");
         if (handleFormDataValidation() && fcmToken && fcmToken !== "") {
             setFormData((prevState) => ({
                 ...prevState,
@@ -42,7 +47,7 @@ export default function LoginPage() {
                 ...formData,
                 fcm_token: fcmToken,
             };
-            await sendSignInForm(form);
+            await sendSignupForm(form);
         }
     };
 
@@ -53,6 +58,7 @@ export default function LoginPage() {
         setIsInvalid({
             email: false,
             password: false,
+            passwordConfirmation: false,
         });
 
         if (!emailRegex.test(formData.email)) {
@@ -67,26 +73,42 @@ export default function LoginPage() {
                 password: true,
             }));
         }
-        return !(isInvalid.email && isInvalid.password);
+
+        if (
+            formData.password !== formData.passwordConfirmation ||
+            formData.passwordConfirmation !== ""
+        ) {
+            setIsInvalid((prevState) => ({
+                ...prevState,
+                passwordConfirmation: true,
+            }));
+        }
+        return !(
+            isInvalid.email ||
+            isInvalid.password ||
+            isInvalid.passwordConfirmation
+        );
     };
 
-    const sendSignInForm = async (
+    const sendSignupForm = async (
         form: typeof formData & { fcm_token: string }
     ) => {
         try {
-            const response = await axios.post("/api/v1/auth/signin", form);
+            const response = await axios.post("/api/v1/auth/register", form);
             const accessToken = response.data.access_token;
             setAuth(accessToken);
-            setUserActivatedStatus(response.data.person.activatedAt ? true : false);
+            setUserActivatedStatus(response.data.is_activated ? true : false);
             setFormData({
                 email: "",
                 password: "",
+                passwordConfirmation: "",
             });
+            router.push("/");
         } catch (error) {
             console.log(error);
             if ((error as AxiosError).response) {
                 setErrorMessage(
-                    (error as AxiosError).message || "Login failed"
+                    (error as AxiosError).message || "Registration failed"
                 );
             } else {
                 setErrorMessage(
@@ -96,13 +118,24 @@ export default function LoginPage() {
         }
     };
 
+    useEffect(() => {
+        if (accessToken) {
+            router.push("/");
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [accessToken]);
     return (
-        <div className="p-10 w-full h-[100vh] flex items-center">
+        <div className="p-10 w-full h-[100vh] flex flex-col items-center justify-center">
+            <div className="flex flex-col gap-7 select-none">
+                <div className="flex flex-col items-start w-full mb-5">
+                    <p className="text-[30px] font-medium ">Credential Data</p>
+                    <p className="text-gray-300">Please complete data bellow</p>
+                </div>
+            </div>
             <form
                 onSubmit={handleSubmit}
                 className="w-full flex flex-col gap-5 "
             >
-                <p className="text-[43px] font-bold mb-5">Sign In</p>
                 {errorMessage && (
                     <Card className="bg-pink-1 rounded-md">
                         <CardBody>
@@ -137,20 +170,26 @@ export default function LoginPage() {
                                 : undefined
                         }
                     />
-                    <Link
-                        prefetch={false}
-                        href="/forget-password"
-                        className="italic hover:underline text-gray-300 text-sm"
-                    >
-                        Forget password?
-                    </Link>
                 </div>
+                <Input
+                    type="password"
+                    label="Password Confirmation"
+                    name="passwordConfirmation"
+                    value={formData.passwordConfirmation}
+                    onChange={handleChange}
+                    isInvalid={isInvalid.passwordConfirmation}
+                    errorMessage={
+                        isInvalid.passwordConfirmation
+                            ? "Password and password confirmation must be the same"
+                            : undefined
+                    }
+                />
                 <Button
                     className="bg-pink-1 hover:bg-pink-2 text-xl font-medium"
                     radius="full"
                     type="submit"
                 >
-                    SUBMIT
+                    Create Account
                 </Button>
             </form>
         </div>

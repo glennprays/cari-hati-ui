@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import WelcomePage from "./welcome";
 import LoginPage from "./login";
+import Aggrement from "./registrations/aggrement";
 
 export default function StartPage() {
     const [currentComponent, setCurrentComponent] = useState<
@@ -43,7 +44,7 @@ export default function StartPage() {
     }, [currentComponent]);
 
     return (
-        <>
+        <div suppressHydrationWarning>
             {currentComponent === "welcome" ? (
                 <WelcomePage
                     onToggleLogin={handleToggleLogin}
@@ -51,8 +52,9 @@ export default function StartPage() {
                 />
             ) : currentComponent === "login" ? (
                 <LoginPage />
-            ) : // TODO: add registration page
-            null}
-        </>
+            ) : (
+                <Aggrement />
+            )}
+        </div>
     );
 }
