@@ -1,5 +1,11 @@
 "use client";
-import { createContext, useEffect, useState } from "react";
+import {
+    Dispatch,
+    SetStateAction,
+    createContext,
+    useEffect,
+    useState,
+} from "react";
 import localforage from "localforage";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -14,6 +20,9 @@ type Auth = {
     setAuth: (token: string) => Promise<void>;
     logout: () => Promise<void>;
     isLoading: boolean;
+    setIsLoading: Dispatch<SetStateAction<boolean>>;
+    isUserActivated: boolean;
+    setUserActivatedStatus: (status: boolean) => Promise<void>;
 };
 
 type Identity = {
@@ -38,23 +47,28 @@ const AuthContext = createContext<Auth>({
     setAuth: async (token: string) => {},
     logout: async () => {},
     isLoading: true,
+    setIsLoading: () => {},
+    isUserActivated: false,
+    setUserActivatedStatus: async (status: boolean) => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [accessToken, setAccessToken] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [identity, setIdentity] = useState<Identity | null>(null);
+    const [isUserActivated, setIsUserActivated] = useState<boolean>(false);
     const router = useRouter();
     const { setFcmToken } = useFcmToken();
 
     const refreshToken = useRefreshToken();
 
-    const LOCALFORAGE_KEY = "accessTokenCh";
+    const LOCALFORAGE_TOKEN_KEY = "accessTokenCh";
+    const LOCALFORAGE_ACTIVATED_KEY = "isUserActivatedCh";
 
     const setAuth = async (token: string) => {
         setIsLoading(true);
         if (token !== "") {
-            await localforage.setItem(LOCALFORAGE_KEY, token);
+            await localforage.setItem(LOCALFORAGE_TOKEN_KEY, token);
             const decodedUserData = jwtDecode(token);
             const now = Math.floor(Date.now() / 1000);
             if (!decodedUserData || decodedUserData.exp < now) {
@@ -79,18 +93,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const axiosError = error as AxiosError;
             console.error(axiosError.response?.data);
         } finally {
-            await localforage.removeItem(LOCALFORAGE_KEY);
+            await localforage.removeItem(LOCALFORAGE_TOKEN_KEY);
+            await localforage.removeItem(LOCALFORAGE_ACTIVATED_KEY);
             setAccessToken("");
             setFcmToken("");
+            setIdentity(null);
+            setIsUserActivated(false);
             router.replace("/");
             setIsLoading(false);
         }
     };
 
+    const setUserActivatedStatus = async (status: boolean) => {
+        setIsLoading(true);
+        await localforage.setItem(LOCALFORAGE_ACTIVATED_KEY, status);
+        setIsUserActivated(status);
+        setIsLoading(false);
+    };
+
     const getAccessToken = async () => {
         setIsLoading(true);
         try {
-            const token = await localforage.getItem<string>(LOCALFORAGE_KEY);
+            const token = await localforage.getItem<string>(
+                LOCALFORAGE_TOKEN_KEY
+            );
             if (token !== "" && token) {
                 const decodedUserData = jwtDecode(token);
                 const now = Math.floor(Date.now() / 1000);
@@ -116,8 +142,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const getUserActivatedStatus = async () => {
+        setIsLoading(true);
+        try {
+            const status = await localforage.getItem<boolean>(
+                LOCALFORAGE_ACTIVATED_KEY
+            );
+            if (status !== null) {
+                setIsUserActivated(status);
+            }
+        } catch (error) {
+            console.error("Failed to get user activated status", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
         getAccessToken();
+        getUserActivatedStatus();
         // eslint-disable-next-line
     }, []);
 
@@ -127,6 +170,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuth,
         logout,
         isLoading,
+        setIsLoading,
+        isUserActivated,
+        setUserActivatedStatus,
     };
 
     return (
