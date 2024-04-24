@@ -113,13 +113,15 @@ export default function Settings() {
                     <MdOutlineVerified size={30} />
                 </div>
             </div>
-            <div className="mb-5 flex cursor-pointer items-center justify-between py-2">
+            <Link
+                href="/matches"
+                className="mb-5 flex cursor-pointer items-center justify-between py-2"
+            >
                 <span className="text-lg">Matched List</span>
                 <IoIosArrowForward size={30} />
-            </div>
+            </Link>
             <h1 className="mb-2 text-2xl font-bold">Settings</h1>
             <div className="flex flex-col">
-                {/* <!-- create for loop menu --> */}
                 {settingMenus.map((menu) => (
                     <Link
                         href={menu.path}
