@@ -1,0 +1,30 @@
+name: Pull Image
+
+on:
+    workflow_run:
+        workflows: ["Build Image CI"]
+        types:
+            - completed
+
+jobs:
+    build:
+        runs-on: self-hosted-2
+
+        env:
+            DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+            DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+            DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
+            DOCKER_NETWORK: ${{secrets.DOCKER_NETWORK}}
+
+        steps:
+            - name: Login to Dockerhub
+              run: echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+
+            - name: Pull Docker image
+              run: docker pull "${DOCKER_USERNAME}/${DOCKER_IMAGE}:latest"
+
+            - name: Delete Old Docker container
+              run: docker rm -f "${DOCKER_IMAGE}-container" || true
+
+            - name: Run Docker Container
+              run: docker run -d --name "${DOCKER_IMAGE}-container" --network ${DOCKER_NETWORK} "${DOCKER_USERNAME}/${DOCKER_IMAGE}:latest"
