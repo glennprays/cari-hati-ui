@@ -9,7 +9,8 @@ import { calculateAge } from "@/utils/date/data.util";
 import { Chip } from "@nextui-org/react";
 
 export default function Home() {
-    const { logout, identity, accessToken, isUserActivated } = useAuth();
+    const { logout, identity, accessToken, isUserActivated, setIsLoading } =
+        useAuth();
     const [matches, setMatches] = useState<any[]>([]);
     const [currentMatch, setCurrentMatch] = useState<number>(0);
 
@@ -24,15 +25,18 @@ export default function Home() {
             setMatches((prev: any[]) => [...prev, ...response.data]);
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     useEffect(() => {
+        setIsLoading(true);
         if (accessToken !== "") {
             getMatches();
-            if (!isUserActivated) {
-                router.push("/activation");
-            }
+            // if (!isUserActivated) {
+            //     router.push("/activation");
+            // }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [accessToken]);

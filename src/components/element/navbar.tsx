@@ -39,7 +39,7 @@ export function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
     return (
-        <nav className="fixed bottom-0 w-full text-white py-4 px-6 flex justify-around items-center  max-w-[448px]">
+        <nav className="bg-primary fixed bottom-0 w-full text-white py-4 px-6 flex justify-around items-center  max-w-[448px] border-t border-gray-800">
             {menus.map((menu, index) => (
                 <div
                     key={index}
