@@ -103,7 +103,7 @@ export default function Home() {
                 password: "",
                 passwordConfirmation: "",
             });
-            router.push("/");
+            router.push("/activation");
         } catch (error) {
             console.log(error);
             if ((error as AxiosError).response) {

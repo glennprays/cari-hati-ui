@@ -63,7 +63,7 @@ export default function Match({ params }: Props) {
                 />
                 <div className="flex items-center gap-2">
                     <span className="text-3xl font-semibold">
-                        {partner?.name ? partner.name.split(" ")[0] : null},{" "}
+                        {partner?.name ? partner.name : null},{" "}
                         {partner?.birth ? calculateAge(partner.birth) : null}{" "}
                     </span>
                     <MdOutlineVerified size={30} />
