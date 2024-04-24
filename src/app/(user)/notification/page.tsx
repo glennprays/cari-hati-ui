@@ -166,7 +166,9 @@ export default function Notification() {
     return (
         <div className="py-12">
             <h1 className="font-bold text-3xl mb-5 px-6">Notification</h1>
-            {notifications.length === 0 && "No notification available."}
+            {notifications.length === 0 && (
+                <p className="px-6">No notification available.</p>
+            )}
             <div className="flex flex-col gap-0">
                 {notifications.map((notification, index) => (
                     <div
