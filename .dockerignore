@@ -1,16 +1,8 @@
-# Development dependencies
+Dockerfile
+.dockerignore
 node_modules
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Next.js specific directories
+npm-debug.log
+README.md
 .next
-
-# OS generated files
-.DS_Store
-
-# IDE/Editor files
-.vscode
+docker
+.git
