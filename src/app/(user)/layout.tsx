@@ -30,7 +30,7 @@ export default function UserLayout({
         "/settings",
     ];
     return (
-        <div className="w-full pb-[72px]">
+        <div className="w-full pb-[20px]">
             {children}
             {showNavbarRoutes.includes(pathname) && <Navbar />}
         </div>

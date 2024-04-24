@@ -9,7 +9,7 @@ import Link from "next/link";
 import React, { FormEvent, useState } from "react";
 
 export default function LoginPage() {
-    const { setAuth, setUserActivatedStatus } = useAuth();
+    const { setAuth, setIsUserActivated, setIsLoading } = useAuth();
 
     const { fcmToken, notificationPermissionStatus } = useFcmToken();
     const [formData, setFormData] = useState({
@@ -74,10 +74,11 @@ export default function LoginPage() {
         form: typeof formData & { fcm_token: string }
     ) => {
         try {
+            setIsLoading(true);
             const response = await axios.post("/api/v1/auth/signin", form);
             const accessToken = response.data.access_token;
             setAuth(accessToken);
-            setUserActivatedStatus(response.data.person.activatedAt ? true : false);
+            setIsUserActivated(response.data.person.activatedAt ? true : false);
             setFormData({
                 email: "",
                 password: "",
@@ -93,6 +94,8 @@ export default function LoginPage() {
                     "An error occurred. Please check your network connection."
                 );
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 

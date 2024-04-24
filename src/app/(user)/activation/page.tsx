@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
 export default function Page() {
-    const { isUserActivated, setUserActivatedStatus } = useAuth();
+    const { isUserActivated, setIsUserActivated, setIsLoading } = useAuth();
     const router = useRouter();
 
     const AxiosPrivate = useAxiosPrivate();
@@ -42,13 +42,14 @@ export default function Page() {
     };
 
     const activateUser = async (code: number) => {
+        setIsLoading(true);
         try {
             const response = await AxiosPrivate.post(
                 "/api/v1/auth/account/activate",
                 { code }
             );
             if (response.status === 200) {
-                setUserActivatedStatus(true);
+                setIsUserActivated(true);
                 router.replace("/home");
             }
         } catch (error) {
@@ -59,6 +60,8 @@ export default function Page() {
                 console.log(error);
                 setErrorMessage("Something went wrong, please try again later");
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -83,6 +86,7 @@ export default function Page() {
         if (isUserActivated) {
             router.push("/home");
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isUserActivated]);
 
     return (
