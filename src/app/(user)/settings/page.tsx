@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 import { MdOutlineVerified } from "react-icons/md";
+import { Avatar } from "@nextui-org/react";
 
 const settingMenus = [
     {
@@ -50,23 +51,18 @@ export default function Settings() {
         <div className="py-12 px-6">
             <h1 className="mb-5 text-3xl font-bold">Profile</h1>
             <div className="mb-5 flex w-full flex-col items-center gap-3">
-                {/* <div className="h-44 w-44 rounded-full border-4 border-pink-1"></div> */}
-                <Image
-                    src={
-                        profile.photoProfile?.path ||
-                        "/assets/images/photo-profile-callback.jpg"
-                    }
-                    alt="User Photo Profile"
-                    className="rounded-full border-4 border-pink-1"
-                    width={176}
-                    height={176}
+                <Avatar
+                    isBordered
+                    showFallback
+                    color="secondary"
+                    src={profile.photoProfile?.path}
+                    className="w-44 h-44"
                 />
                 <div className="flex items-center gap-2">
                     <span className="text-3xl font-semibold">
                         {profile?.name ? profile.name.split(" ")[0] : null},{" "}
                         {profile?.birth ? calculateAge(profile.birth) : null}{" "}
                     </span>
-                    {/* <div className="h-[30px] w-[30px] rounded-full border"></div> */}
                     <MdOutlineVerified size={30} />
                 </div>
             </div>
