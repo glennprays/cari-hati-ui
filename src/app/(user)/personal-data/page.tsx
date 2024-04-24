@@ -1,3 +1,4 @@
+"use client";
 import useAxiosPrivate from "@/utils/hooks/useAxiosPrivate";
 import { Button, Input, Radio, RadioGroup } from "@nextui-org/react";
 import { useState } from "react";
