@@ -68,6 +68,9 @@ export default function Home() {
                 receiverId: userId,
                 liked: liked,
             });
+            if (currentMatch === matches.length - 1) {
+                setCurrentMatch((prev) => prev - 1);
+            }
             setMatches((prev) => prev.filter((match) => match.id !== userId));
         } catch (error) {
             console.error(error);
