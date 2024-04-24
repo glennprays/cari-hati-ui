@@ -1,0 +1,33 @@
+name: Build Image CI
+
+on:
+    push:
+        branches: ["main"]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        env:
+            DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+            DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+            DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Create .env file from ENV_FILE secret
+              run: echo "${{ secrets.ENV_FILE }}" > .env
+
+            - name: Create .env.local file from ENV_LOCAL_FILE secret
+              run: echo "${{ secrets.ENV_LOCAL_FILE }}" > .env.local
+
+            - name: Login to Dockerhub
+              run: echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+
+            - name: Build Docker image
+              run: docker build -t "${DOCKER_USERNAME}/${DOCKER_IMAGE}" .
+
+            - name: Push to Dockerhub
+              run: docker push "${DOCKER_USERNAME}/${DOCKER_IMAGE}:latest"
