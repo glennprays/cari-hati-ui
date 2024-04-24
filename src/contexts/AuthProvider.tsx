@@ -13,6 +13,7 @@ import axios from "@/utils/requester/axios";
 import useFcmToken from "@/utils/hooks/useFcmToken";
 import { jwtDecode } from "@/utils/jwt/jwt.util";
 import useRefreshToken from "@/utils/hooks/useRefreshToken";
+import { set } from "firebase/database";
 
 type Auth = {
     accessToken: string;
@@ -22,7 +23,7 @@ type Auth = {
     isLoading: boolean;
     setIsLoading: Dispatch<SetStateAction<boolean>>;
     isUserActivated: boolean;
-    setUserActivatedStatus: (status: boolean) => Promise<void>;
+    setIsUserActivated: Dispatch<SetStateAction<boolean>>;
 };
 
 type Identity = {
@@ -49,7 +50,7 @@ const AuthContext = createContext<Auth>({
     isLoading: true,
     setIsLoading: () => {},
     isUserActivated: false,
-    setUserActivatedStatus: async (status: boolean) => {},
+    setIsUserActivated: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -57,13 +58,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [identity, setIdentity] = useState<Identity | null>(null);
     const [isUserActivated, setIsUserActivated] = useState<boolean>(false);
+
     const router = useRouter();
     const { setFcmToken } = useFcmToken();
 
     const refreshToken = useRefreshToken();
 
     const LOCALFORAGE_TOKEN_KEY = "accessTokenCh";
-    const LOCALFORAGE_ACTIVATED_KEY = "isUserActivatedCh";
 
     const setAuth = async (token: string) => {
         setIsLoading(true);
@@ -94,7 +95,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error(axiosError.response?.data);
         } finally {
             await localforage.removeItem(LOCALFORAGE_TOKEN_KEY);
-            await localforage.removeItem(LOCALFORAGE_ACTIVATED_KEY);
             setAccessToken("");
             setFcmToken("");
             setIdentity(null);
@@ -102,13 +102,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             router.replace("/");
             setIsLoading(false);
         }
-    };
-
-    const setUserActivatedStatus = async (status: boolean) => {
-        setIsLoading(true);
-        await localforage.setItem(LOCALFORAGE_ACTIVATED_KEY, status);
-        setIsUserActivated(status);
-        setIsLoading(false);
     };
 
     const getAccessToken = async () => {
@@ -142,27 +135,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    useEffect(() => {
+        getAccessToken();
+        // eslint-disable-next-line
+    }, []);
+
     const getUserActivatedStatus = async () => {
-        setIsLoading(true);
         try {
-            const status = await localforage.getItem<boolean>(
-                LOCALFORAGE_ACTIVATED_KEY
-            );
-            if (status !== null) {
-                setIsUserActivated(status);
+            const response = await axios.get("/api/v1/auth/account", {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.status === 200) {
+                setIsUserActivated(response.data.person.activatedAt);
             }
         } catch (error) {
-            console.error("Failed to get user activated status", error);
-        } finally {
-            setIsLoading(false);
+            const axiosError = error as AxiosError;
+            console.error(axiosError.response?.data);
         }
     };
 
     useEffect(() => {
-        getAccessToken();
-        getUserActivatedStatus();
+        if (accessToken !== "") {
+            getUserActivatedStatus();
+        }
         // eslint-disable-next-line
-    }, []);
+    }, [accessToken]);
 
     const authContexValue = {
         accessToken,
@@ -172,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         setIsLoading,
         isUserActivated,
-        setUserActivatedStatus,
+        setIsUserActivated,
     };
 
     return (

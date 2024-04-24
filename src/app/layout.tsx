@@ -23,7 +23,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`bg-primary text-white overflow-hidden ${poppins.className}`}
+                className={`bg-primary text-white overflow-y-auto no-scrollbar ${poppins.className}`}
             >
                 <main>
                     <AuthProvider>
