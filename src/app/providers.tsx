@@ -17,7 +17,7 @@ import { LoadingFullPage } from "@/components/loading";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     const [notificationPermission, setNotificationPermission] =
-        useState<boolean>(false);
+        useState<boolean>(true);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { isLoading } = useAuth();
     useEffect(() => {
@@ -26,13 +26,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 window.Notification.permission !== "granted" &&
                 typeof window !== "undefined"
             ) {
-                setNotificationPermission(true);
+                setNotificationPermission(false);
                 onOpen();
             }
         };
 
         checkPermission();
-    }, [onOpen]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div suppressHydrationWarning>
