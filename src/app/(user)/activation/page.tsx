@@ -71,6 +71,7 @@ export default function Page() {
             const response = await AxiosPrivate.post(
                 "/api/v1/auth/account/activate/code"
             );
+            router.push("/personal-data")
         } catch (error) {
             const { response } = error as AxiosError;
             if (response?.status === 406) {
@@ -82,12 +83,12 @@ export default function Page() {
         }
     };
 
-    useEffect(() => {
-        if (isUserActivated) {
-            router.push("/home");
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isUserActivated]);
+    // useEffect(() => {
+    //     if (isUserActivated) {
+    //         router.push("/home");
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [isUserActivated]);
 
     return (
         <div className="p-10 w-full h-[100vh] flex flex-col items-center justify-center">
