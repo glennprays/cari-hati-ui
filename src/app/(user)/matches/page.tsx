@@ -18,11 +18,12 @@ export default function Matches() {
 
     const getMatches = async () => {
         try {
-            const response = await axiosPrivate.get("/api/v1/users/matches");
-            const data = response.data.filter(
-                (match: any) => match.status === "accepted"
-            );
-            setMatches(data);
+            const response = await axiosPrivate.get("/api/v1/users/matches", {
+                params: {
+                    accepted_only: true,
+                },
+            });
+            setMatches(response.data);
         } catch (error) {
             console.error(error);
         } finally {
@@ -35,13 +36,16 @@ export default function Matches() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
-        <div className="py-6 px-6 mb-5">
+        <div className="py-6 px-6">
             <div className="flex justify-between items-center mb-5">
                 <IoIosArrowBack size={30} onClick={() => router.back()} />
-                <BsFillInboxesFill size={27} />
+                <BsFillInboxesFill
+                    size={27}
+                    onClick={() => router.push("matches/processes")}
+                />
             </div>
             <div className="mb-5">
-                <h1 className="font-bold text-3xl">Matched List</h1>
+                <h1 className="font-semibold text-2xl">Matched List</h1>
                 <p>Total matched {matches?.length} people!</p>
             </div>
             <div className="flex flex-col gap-2">
@@ -69,7 +73,8 @@ export default function Matches() {
                                             {calculateAge(partner.birth)}
                                         </p>
                                         <p className="text-sm text-gray-300">
-                                            Matched on {formatDate(match.updatedAt)}
+                                            Matched on{" "}
+                                            {formatDate(match.updatedAt)}
                                         </p>
                                     </div>
                                 </div>
