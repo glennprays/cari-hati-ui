@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
     const { fcmToken } = useFcmToken();
-    const { setAuth, accessToken, setUserActivatedStatus } = useAuth();
+    const { setAuth, accessToken, setIsUserActivated } = useAuth();
 
     const router = useRouter();
 
@@ -97,7 +97,7 @@ export default function Home() {
             const response = await axios.post("/api/v1/auth/register", form);
             const accessToken = response.data.access_token;
             setAuth(accessToken);
-            setUserActivatedStatus(response.data.is_activated ? true : false);
+            setIsUserActivated(response.data.is_activated ? true : false);
             setFormData({
                 email: "",
                 password: "",
