@@ -68,9 +68,6 @@ export default function Home() {
                 receiverId: userId,
                 liked: liked,
             });
-            setCurrentMatch((prev) =>
-                prev === matches.length - 1 ? 0 : prev + 1
-            );
             setMatches((prev) => prev.filter((match) => match.id !== userId));
         } catch (error) {
             console.error(error);
@@ -98,7 +95,7 @@ export default function Home() {
                 <>
                     <div className="flex flex-col gap-5 items-center justify-center">
                         <Image
-                            isBlurred
+                            height={240}
                             width={240}
                             src={
                                 matches[currentMatch]?.photoProfile
