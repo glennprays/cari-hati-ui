@@ -2,8 +2,6 @@
 import useAxiosPrivate from "@/utils/hooks/useAxiosPrivate";
 import { Button, Input, Radio, RadioGroup } from "@nextui-org/react";
 import { useState } from "react";
-import { DatePicker } from "@nextui-org/date-picker";
-import { parseDate } from "@internationalized/date";
 import { Textarea } from "@nextui-org/react";
 import useAuth from "@/utils/hooks/useAuth";
 import { useRouter } from "next/navigation";
@@ -15,7 +13,7 @@ export default function PersonalData() {
     const [personalData, setPersonalData] = useState({
         name: "",
         gender: "",
-        birth: parseDate(new Date().toISOString()),
+        birth: "",
         description: "",
     });
     const [isInvalid, setIsInvalid] = useState({
@@ -27,10 +25,18 @@ export default function PersonalData() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setPersonalData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
+        if (name === "birth") {
+            const date = new Date(value).toISOString();
+            setPersonalData((prevState) => ({
+                ...prevState,
+                birth: date,
+            }));
+        } else {
+            setPersonalData((prevState) => ({
+                ...prevState,
+                [name]: value,
+            }));
+        }
     };
 
     const postProfile = async () => {
@@ -74,15 +80,12 @@ export default function PersonalData() {
                     <Radio value="male">Male</Radio>
                     <Radio value="female">Female</Radio>
                 </RadioGroup>
-                <DatePicker
+                <Input
                     label="Birthday"
+                    type="date"
                     value={personalData.birth}
-                    onChange={(date) =>
-                        setPersonalData((prevState) => ({
-                            ...prevState,
-                            birth: date,
-                        }))
-                    }
+                    name="birth"
+                    onChange={handleChange}
                 />
                 <Textarea
                     label="Description"
