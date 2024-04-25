@@ -34,9 +34,9 @@ export default function Gift() {
                     <Link href="/gift/topup" className="bg-pink-1 rounded-lg p-2 flex items-center justify-center">
                         Topup
                     </Link>
-                    <Link href="/gift/withdraw" className="bg-pink-1 rounded-lg p-2 flex items-center justify-center">
+                    {/* <Link href="/gift/withdraw" className="bg-pink-1 rounded-lg p-2 flex items-center justify-center">
                         Withdraw
-                    </Link>
+                    </Link> */}
                     <Link href="/gift/history" className="bg-pink-1 rounded-lg p-2 flex items-center justify-center">
                         History
                     </Link>
