@@ -11,22 +11,22 @@ import { Avatar } from "@nextui-org/react";
 import React from "react";
 
 const settingMenus = [
-    {
-        title: "Personal Data",
-        path: "/settings/personal-data",
-    },
+    // {
+    //     title: "Personal Data",
+    //     path: "/settings/personal-data",
+    // },
     {
         title: "Passions",
         path: "/settings/passions",
     },
-    {
-        title: "Account",
-        path: "/settings/account",
-    },
-    {
-        title: "Photo Gallery",
-        path: "/settings/photo-gallery",
-    },
+    // {
+    //     title: "Account",
+    //     path: "/settings/account",
+    // },
+    // {
+    //     title: "Photo Gallery",
+    //     path: "/settings/photo-gallery",
+    // },
 ];
 export default function Settings() {
     const [profile, setProfile] = useState<any>({});
