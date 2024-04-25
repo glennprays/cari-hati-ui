@@ -25,7 +25,7 @@ const notificationIcons = [
         icon: <IoWarningOutline size={25} />,
     },
     {
-        type: "anouncement",
+        type: "anoucement",
         background: "bg-green-400",
         icon: <PiSpeakerHighBold size={25} />,
     },
