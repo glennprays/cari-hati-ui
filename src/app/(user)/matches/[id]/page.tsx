@@ -101,16 +101,18 @@ export default function Match({ params }: Props) {
                 ))}
             </div>
             {match?.status !== "accepted" ? (
-                identity?.id === match?.receiver ? (
+                identity?.id !== match?.receiver ? (
                     <div className="flex flex-col items-center justify-center gap-5 mt-5">
                         <div className="flex items-center gap-5">
                             <Button
                                 className={`flex bg-white items-center justify-center p-3 w-[50px] h-[50px] rounded-full`}
+                                onClick={() => handleUpdateMatch("accepted")}
                             >
                                 <FaCheck size={30} className="text-pink-1" />
                             </Button>
                             <Button
                                 className={`flex bg-white items-center justify-center p-3 w-[50px] h-[50px] rounded-full`}
+                                onClick={() => handleUpdateMatch("rejected")}
                             >
                                 <IoCloseOutline
                                     size={30}
@@ -118,7 +120,10 @@ export default function Match({ params }: Props) {
                                 />
                             </Button>
                         </div>
-                        <Button className="rounded-xl py-2 px-6 bg-gray-500">
+                        <Button
+                            className="rounded-xl py-2 px-6 bg-gray-500"
+                            onClick={() => handleUpdateMatch("ignore")}
+                        >
                             Ignore
                         </Button>
                     </div>
