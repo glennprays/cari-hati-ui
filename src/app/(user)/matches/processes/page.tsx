@@ -64,13 +64,13 @@ export default function Processes() {
                             <div className="px-0 py-2 rounded-lg shadow-md flex items-center gap-4">
                                 <Avatar
                                     showFallback
-                                    src={match.receiver.photoProfile?.path}
+                                    src={match.sender.photoProfile?.path}
                                     className="w-14 h-14"
                                 />
                                 <div>
                                     <p className="text-xl">
-                                        {match.receiver.name.split(" ")[0]},{" "}
-                                        {calculateAge(match.receiver.birth)}
+                                        {match.sender.name.split(" ")[0]},{" "}
+                                        {calculateAge(match.sender.birth)}
                                     </p>
                                     <p className="text-sm text-gray-300">
                                         Requested on{" "}
