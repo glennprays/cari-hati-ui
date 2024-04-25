@@ -43,11 +43,15 @@ export default function History() {
                         onClick={() => router.push(transaction.path || "")}
                     >
                         <div className="flex flex-col">
-                            <h1 className="font-semibold text-lg">
+                            <h1 className="font-semibold text-xl">
                                 {transaction?.transactionTypeId === 1
                                     ? "Top Up"
                                     : "Withdraw"}
                             </h1>
+                            <p>
+                                Virtual Account:{" "}
+                                {transaction?.bankAccountNumber}
+                            </p>
                             <p>
                                 Rp{" "}
                                 {transaction?.moneyAmount +
