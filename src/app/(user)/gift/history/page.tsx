@@ -44,12 +44,16 @@ export default function History() {
                     >
                         <div className="flex flex-col">
                             <h1 className="font-semibold text-lg">
-                                {transaction?.type}
+                                {transaction?.transactionTypeId === 1
+                                    ? "Top Up"
+                                    : "Withdraw"}
                             </h1>
                             <p>
+                                Rp{" "}
                                 {transaction?.moneyAmount +
                                     transaction?.transactionFee}
                             </p>
+                            <p>Status: {transaction?.status}</p>
                             <p className="text-gray-400 text-sm">
                                 {transaction?.createdAt}
                             </p>
