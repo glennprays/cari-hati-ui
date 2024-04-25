@@ -29,12 +29,30 @@ export default function Match({ params }: Props) {
                 `/api/v1/users/matches/${params.id}`
             );
             const partner =
-                response.data.sender !== identity?.id
+                response.data.sender === identity?.id
                     ? response.data.receiver
                     : response.data.sender;
             console.log(partner);
             setMatch(response.data);
             setPartner(partner);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleUpdateMatch = async (status: string) => {
+        try {
+            setIsLoading(true);
+            const response = await axiosPrivate.put(
+                `/api/v1/users/matches/status`,
+                {
+                    id: params.id,
+                    state: status,
+                }
+            );
+            setMatch(response.data);
         } catch (error) {
             console.error(error);
         } finally {
@@ -82,29 +100,33 @@ export default function Match({ params }: Props) {
                     </Chip>
                 ))}
             </div>
-            {identity?.id === match?.receiver ? (
-                <div className="flex flex-col items-center justify-center gap-5 mt-5">
-                    <div className="flex items-center gap-5">
-                        <Button
-                            className={`flex bg-white items-center justify-center p-3 w-[50px] h-[50px] rounded-full`}
-                        >
-                            <FaCheck size={30} className="text-pink-1" />
-                        </Button>
-                        <Button
-                            className={`flex bg-white items-center justify-center p-3 w-[50px] h-[50px] rounded-full`}
-                        >
-                            <IoCloseOutline
-                                size={30}
-                                className="text-gray-500"
-                            />
+            {match?.status !== "accepted" ? (
+                identity?.id === match?.receiver ? (
+                    <div className="flex flex-col items-center justify-center gap-5 mt-5">
+                        <div className="flex items-center gap-5">
+                            <Button
+                                className={`flex bg-white items-center justify-center p-3 w-[50px] h-[50px] rounded-full`}
+                            >
+                                <FaCheck size={30} className="text-pink-1" />
+                            </Button>
+                            <Button
+                                className={`flex bg-white items-center justify-center p-3 w-[50px] h-[50px] rounded-full`}
+                            >
+                                <IoCloseOutline
+                                    size={30}
+                                    className="text-gray-500"
+                                />
+                            </Button>
+                        </div>
+                        <Button className="rounded-xl py-2 px-6 bg-gray-500">
+                            Ignore
                         </Button>
                     </div>
-                    <Button className="rounded-xl py-2 px-6 bg-gray-500">
-                        Ignore
-                    </Button>
-                </div>
+                ) : (
+                    <p className="text-center mt-5">Waiting for response</p>
+                )
             ) : (
-                <p className="text-center mt-5">Waiting for response</p>
+                <p className="text-center mt-5">Accepted</p>
             )}
         </div>
     );

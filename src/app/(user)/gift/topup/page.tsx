@@ -16,9 +16,7 @@ export default function Topup() {
 
     const getCoinPackages = async () => {
         try {
-            const response = await axiosPrivate.get(
-                "/api/v1/coins/packages"
-            );
+            const response = await axiosPrivate.get("/api/v1/coins/packages");
             setCoinPackages(response.data);
         } catch (error) {
             console.error(error);
@@ -38,6 +36,7 @@ export default function Topup() {
                         coin_package_id: selectedCoinPackage.id,
                     }
                 );
+                setResponse(response.data);
                 // router.push(`/gift/topup/${response.data.id}`);
             }
         } catch (error) {
