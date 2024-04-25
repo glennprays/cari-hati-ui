@@ -18,6 +18,8 @@ export default function History() {
             setTransactions(response.data);
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
