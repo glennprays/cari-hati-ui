@@ -38,7 +38,7 @@ export default function Topup() {
                         coin_package_id: selectedCoinPackage.id,
                     }
                 );
-                router.push(`/gift/topup/${response.data.id}`);
+                // router.push(`/gift/topup/${response.data.id}`);
             }
         } catch (error) {
             console.error(error);
