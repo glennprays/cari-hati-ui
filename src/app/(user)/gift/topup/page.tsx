@@ -98,7 +98,7 @@ export default function Topup() {
                     </div>
                 </>
             ) : (
-                <div className="flex justify-center mt-10">
+                <div className="flex flex-col justify-center mt-10">
                     <p className="font-semibold text-2xl">
                         Virtual Account Number: {response.bankAccountNumber}
                     </p>
