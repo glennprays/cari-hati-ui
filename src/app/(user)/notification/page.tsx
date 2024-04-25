@@ -136,7 +136,7 @@ export default function Notification() {
         try {
             setIsLoading(true);
             const response = await axiosPrivate.get(
-                `/api/v1/notifications?limit=${limit}&offset=${offset}`
+                `/api/v1/users/notifications?limit=${limit}&offset=${offset}`
             );
             const data = response.data.map((notification: any) => {
                 return {
@@ -147,7 +147,7 @@ export default function Notification() {
                     path: notification.path,
                 };
             });
-            setNotifications(response.data);
+            setNotifications(data);
         } catch (error) {
             console.error(error);
         } finally {
