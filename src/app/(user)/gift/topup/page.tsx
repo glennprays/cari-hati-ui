@@ -17,7 +17,7 @@ export default function Topup() {
     const getCoinPackages = async () => {
         try {
             const response = await axiosPrivate.get(
-                "/api/v1/data/coins/packages"
+                "/api/v1/coins/packages"
             );
             setCoinPackages(response.data);
         } catch (error) {
