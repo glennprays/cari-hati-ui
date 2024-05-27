@@ -45,7 +45,7 @@ export default function Match({ params }: Props) {
     const handleUpdateMatch = async (status: string) => {
         try {
             setIsLoading(true);
-            const response = await axiosPrivate.put(
+            const response = await axiosPrivate.post(
                 `/api/v1/users/matches/status`,
                 {
                     id: params.id,
